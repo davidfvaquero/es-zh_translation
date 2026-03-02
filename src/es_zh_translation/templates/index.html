@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ES ↔ ZH Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f4ec;
@@ -12,12 +15,31 @@
       --accent: #0e7a6d;
       --line: #d7d4cc;
       --danger: #8d2727;
+      --muted: #4d5d5d;
+      --font-ui: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      --font-cjk: "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Hiragino Sans GB",
+        "Microsoft YaHei", "WenQuanYi Micro Hei", "SimSun", sans-serif;
+    }
+    :root[data-theme="dark"] {
+      --bg: #101615;
+      --card: #182120;
+      --ink: #e8f0ee;
+      --accent: #29b6a4;
+      --line: #2f3f3d;
+      --danger: #ff8a8a;
+      --muted: #afc1bc;
+    }
+    html, body {
+      min-height: 100%;
     }
     body {
       margin: 0;
-      font-family: "Segoe UI", "Avenir Next", sans-serif;
+      min-height: 100vh;
+      font-family: var(--font-ui);
       color: var(--ink);
-      background: radial-gradient(circle at 10% 10%, #e9f3ef, var(--bg) 45%);
+      background-color: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
     .wrap {
       max-width: 900px;
@@ -37,8 +59,31 @@
     }
     p.meta {
       margin: 0 0 1rem;
-      color: #4d5d5d;
+      color: var(--muted);
       font-size: 0.95rem;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.25rem;
+    }
+    .topbar h1 {
+      margin: 0;
+    }
+    .theme-btn {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .theme-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
     }
     textarea {
       width: 100%;
@@ -48,8 +93,12 @@
       border-radius: 10px;
       padding: 0.8rem;
       font-size: 1rem;
+      line-height: 1.55;
+      font-family: var(--font-cjk);
       box-sizing: border-box;
       margin-bottom: 0.8rem;
+      background: transparent;
+      color: var(--ink);
     }
     button {
       background: var(--accent);
@@ -77,16 +126,19 @@
     .result pre {
       margin: 0;
       white-space: pre-wrap;
-      font-family: inherit;
+      font-family: var(--font-cjk);
       font-size: 1rem;
-      line-height: 1.45;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
   <main class="wrap">
     <section class="card">
-      <h1>Spanish ↔ Chinese Translator</h1>
+      <div class="topbar">
+        <h1>Spanish ↔ Chinese Translator</h1>
+        <button class="theme-btn" id="themeToggle" type="button">Dark mode</button>
+      </div>
       <p class="meta">
         Auto-detects direction. If <code>{{ output_dir }}</code> exists, it is used; otherwise <code>{{ model }}</code>.
         Running on <code>{{ device }}</code>.
@@ -104,10 +156,32 @@
       {% if output %}
       <section class="result">
         <h2>Output</h2>
-        <pre>{{ output }}</pre>
+        <pre lang="zh-Hans">{{ output }}</pre>
       </section>
       {% endif %}
     </section>
   </main>
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById("themeToggle");
+      const saved = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const initial = saved || (prefersDark ? "dark" : "light");
+
+      function applyTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        btn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      }
+
+      applyTheme(initial);
+
+      btn.addEventListener("click", function () {
+        const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("theme", next);
+        applyTheme(next);
+      });
+    })();
+  </script>
 </body>
 </html>
