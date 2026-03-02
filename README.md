@@ -8,14 +8,14 @@ Fine-tune and run bidirectional Spanish–Chinese translation using Facebook's `
 pip install -r requirements.txt
 ```
 
-> **Note:** Training benefits from a CUDA GPU. On CPU it will work but run slowly. Edit `config.py` to adjust hyperparameters.
+> **Note:** Training benefits from a CUDA GPU. On CPU it will work but run slowly. Edit `src/es_zh_translation/config.py` to adjust hyperparameters.
 
 ## Usage
 
 ### Fine-tune the model
 
 ```bash
-python main.py train
+PYTHONPATH=src python -m es_zh_translation.cli train
 ```
 
 This will:
@@ -27,32 +27,32 @@ This will:
 
 ```bash
 # Spanish → Chinese
-python main.py translate "Me llamo David y soy de España"
+PYTHONPATH=src python -m es_zh_translation.cli translate "Me llamo David y soy de España"
 
 # Chinese → Spanish (auto-detected)
-python main.py translate "我叫大卫，来自西班牙"
+PYTHONPATH=src python -m es_zh_translation.cli translate "我叫大卫，来自西班牙"
 
 # Use a specific model path
-python main.py translate --model ./mt_es_zh_lora "Hola mundo"
+PYTHONPATH=src python -m es_zh_translation.cli translate --model ./mt_es_zh_lora "Hola mundo"
 ```
 
 The direction is auto-detected: if the input contains Chinese characters it translates to Spanish, otherwise to Chinese.
 
 ## Project Structure
 
-| File | Description |
+| Path | Description |
 |---|---|
-| `config.py` | Hyperparameters, paths, device selection |
-| `model.py` | Load M2M100 model & tokenizer |
-| `data.py` | Dataset loading, prompt template, tokenization |
-| `train.py` | Training pipeline (HuggingFace Trainer) |
-| `translate.py` | Bidirectional auto-detect translation |
-| `main.py` | CLI entry point (`train` / `translate`) |
+| `src/es_zh_translation/config.py` | Hyperparameters, paths, device selection |
+| `src/es_zh_translation/model.py` | Load M2M100 model & tokenizer |
+| `src/es_zh_translation/data.py` | Dataset loading, prompt template, tokenization |
+| `src/es_zh_translation/train.py` | Training pipeline (HuggingFace Trainer) |
+| `src/es_zh_translation/translate.py` | Bidirectional auto-detect translation |
+| `src/es_zh_translation/cli.py` | CLI entry point (`train` / `translate`) |
 | `requirements.txt` | Dependencies |
 
 ## Configuration
 
-All settings live in `config.py`:
+All settings live in `src/es_zh_translation/config.py`:
 
 | Parameter | Default | Description |
 |---|---|---|

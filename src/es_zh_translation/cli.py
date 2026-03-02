@@ -3,20 +3,20 @@ CLI entry point for the ES-ZH translation project.
 
 Usage
 -----
-    python main.py train                                   # fine-tune the model
-    python main.py translate "Me llamo David"               # ES → ZH
-    python main.py translate "我叫大卫，来自西班牙"           # ZH → ES
-    python main.py translate --model ./mt_es_zh_lora "Hola" # use fine-tuned model
+    PYTHONPATH=src python -m es_zh_translation.cli train
+    PYTHONPATH=src python -m es_zh_translation.cli translate "Me llamo David"
+    PYTHONPATH=src python -m es_zh_translation.cli translate "我叫大卫，来自西班牙"
+    PYTHONPATH=src python -m es_zh_translation.cli translate --model ./mt_es_zh_lora "Hola"
 """
 
 import argparse
 import os
 
-import config
-from model import load_model_and_tokenizer
-from data import load_and_split_dataset, prepare_datasets
-from train import get_training_args, train_model
-from translate import translate
+from . import config
+from .model import load_model_and_tokenizer
+from .data import load_and_split_dataset, prepare_datasets
+from .train import get_training_args, train_model
+from .translate import translate
 
 
 def cmd_train(args):
