@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ES ↔ ZH Translator</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --card: #fffefb;
+      --ink: #1d2a2a;
+      --accent: #0e7a6d;
+      --line: #d7d4cc;
+      --danger: #8d2727;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Avenir Next", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 10%, #e9f3ef, var(--bg) 45%);
+    }
+    .wrap {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    }
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.6rem;
+    }
+    p.meta {
+      margin: 0 0 1rem;
+      color: #4d5d5d;
+      font-size: 0.95rem;
+    }
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      box-sizing: border-box;
+      margin-bottom: 0.8rem;
+    }
+    button {
+      background: var(--accent);
+      border: none;
+      color: white;
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .error {
+      margin-top: 0.8rem;
+      color: var(--danger);
+      font-weight: 600;
+    }
+    .result {
+      margin-top: 1rem;
+      border-top: 1px solid var(--line);
+      padding-top: 1rem;
+    }
+    .result h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+    }
+    .result pre {
+      margin: 0;
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 1rem;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Spanish ↔ Chinese Translator</h1>
+      <p class="meta">
+        Auto-detects direction. If <code>{{ output_dir }}</code> exists, it is used; otherwise <code>{{ model }}</code>.
+        Running on <code>{{ device }}</code>.
+      </p>
+
+      <form method="post">
+        <textarea name="text" placeholder="Type Spanish or Chinese text here...">{{ text }}</textarea>
+        <button type="submit">Translate</button>
+      </form>
+
+      {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
+
+      {% if output %}
+      <section class="result">
+        <h2>Output</h2>
+        <pre>{{ output }}</pre>
+      </section>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

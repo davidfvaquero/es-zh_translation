@@ -38,6 +38,14 @@ PYTHONPATH=src python -m es_zh_translation.cli translate --model ./mt_es_zh_lora
 
 The direction is auto-detected: if the input contains Chinese characters it translates to Spanish, otherwise to Chinese.
 
+### Run a simple web UI
+
+```bash
+PYTHONPATH=src python -m es_zh_translation.web
+```
+
+Then open `http://127.0.0.1:5000` in your browser.
+
 ## Project Structure
 
 | Path | Description |
@@ -48,6 +56,8 @@ The direction is auto-detected: if the input contains Chinese characters it tran
 | `src/es_zh_translation/train.py` | Training pipeline (HuggingFace Trainer) |
 | `src/es_zh_translation/translate.py` | Bidirectional auto-detect translation |
 | `src/es_zh_translation/cli.py` | CLI entry point (`train` / `translate`) |
+| `src/es_zh_translation/web.py` | Flask web server for translation |
+| `src/es_zh_translation/templates/index.html` | Web UI template |
 | `requirements.txt` | Dependencies |
 
 ## Configuration
