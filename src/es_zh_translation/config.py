@@ -19,15 +19,21 @@ SEED = 42
 # ── Preprocessing ───────────────────────────────────────────────────────────
 TRAIN_SUBSET_SIZE = 5000
 VAL_SUBSET_SIZE = 500
-MAX_LENGTH = 128
+MAX_LENGTH = 96
 
 # ── Training ────────────────────────────────────────────────────────────────
 OUTPUT_DIR = "./mt_es_zh_lora"
-BATCH_SIZE = 4
-GRADIENT_ACCUMULATION_STEPS = 2
+BATCH_SIZE = 1
+GRADIENT_ACCUMULATION_STEPS = 8
 NUM_EPOCHS = 3
 LEARNING_RATE = 2e-4
 FP16 = True
+GRADIENT_CHECKPOINTING = True
+USE_LORA = True
+LORA_R = 8
+LORA_ALPHA = 16
+LORA_DROPOUT = 0.05
+LORA_TARGET_MODULES = ["q_proj", "v_proj"]
 LOGGING_STEPS = 50
 
 # ── Translation ─────────────────────────────────────────────────────────────

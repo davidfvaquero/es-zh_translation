@@ -13,7 +13,7 @@ import argparse
 import os
 
 from . import config
-from .model import load_model_and_tokenizer
+from .model import load_model_and_tokenizer, apply_lora_adapters
 from .data import load_and_split_dataset, prepare_datasets
 from .train import get_training_args, train_model
 from .translate import translate
@@ -22,6 +22,14 @@ from .translate import translate
 def cmd_train(args):
     """Run the full training pipeline."""
     model, tokenizer = load_model_and_tokenizer(config.MODEL_NAME, config.DEVICE)
+    if config.USE_LORA:
+        model = apply_lora_adapters(
+            model,
+            r=config.LORA_R,
+            alpha=config.LORA_ALPHA,
+            dropout=config.LORA_DROPOUT,
+            target_modules=config.LORA_TARGET_MODULES,
+        )
 
     train_ds, val_ds = load_and_split_dataset(
         config.DATASET_NAME,
@@ -46,6 +54,7 @@ def cmd_train(args):
         num_epochs=config.NUM_EPOCHS,
         learning_rate=config.LEARNING_RATE,
         fp16=config.FP16,
+        gradient_checkpointing=config.GRADIENT_CHECKPOINTING,
         logging_steps=config.LOGGING_STEPS,
     )
 

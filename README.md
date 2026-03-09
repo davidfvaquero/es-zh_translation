@@ -1,6 +1,6 @@
 # Spanish ↔ Chinese Translation (M2M100)
 
-Fine-tune and run bidirectional Spanish–Chinese translation using Facebook's `m2m100_418M` model.
+Fine-tune and run bidirectional Spanish–Chinese translation using Facebook's `m2m100_418M` model with LoRA adapters.
 
 ## Setup
 
@@ -21,7 +21,7 @@ PYTHONPATH=src python -m es_zh_translation.cli train
 This will:
 1. Download the `news_commentary` ES-ZH parallel corpus
 2. Preprocess and tokenize 5 000 training / 500 validation examples
-3. Fine-tune for 3 epochs and save to `./mt_es_zh_lora/`
+3. Train LoRA adapters for 3 epochs and save them to `./mt_es_zh_lora/`
 
 ### Translate text
 
@@ -69,8 +69,15 @@ All settings live in `src/es_zh_translation/config.py`:
 | `MODEL_NAME` | `facebook/m2m100_418M` | Base model |
 | `TRAIN_SUBSET_SIZE` | `5000` | Number of training examples |
 | `VAL_SUBSET_SIZE` | `500` | Number of validation examples |
+| `MAX_LENGTH` | `96` | Tokenization max sequence length |
 | `NUM_EPOCHS` | `3` | Training epochs |
-| `BATCH_SIZE` | `4` | Per-device batch size |
+| `BATCH_SIZE` | `1` | Per-device batch size |
+| `GRADIENT_ACCUMULATION_STEPS` | `8` | Simulate larger batch with lower VRAM |
+| `GRADIENT_CHECKPOINTING` | `True` | Reduces activation memory usage |
+| `USE_LORA` | `True` | Train LoRA adapters instead of full model weights |
+| `LORA_R` | `8` | LoRA rank |
+| `LORA_ALPHA` | `16` | LoRA scaling factor |
+| `LORA_DROPOUT` | `0.05` | LoRA dropout |
 | `LEARNING_RATE` | `2e-4` | Learning rate |
 | `FP16` | `True` | Mixed precision (requires GPU) |
 | `MAX_NEW_TOKENS` | `80` | Max tokens during translation |
