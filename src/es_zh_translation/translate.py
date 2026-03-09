@@ -3,6 +3,7 @@ Bidirectional Spanish ↔ Chinese translation.
 """
 
 import re
+import unicodedata
 import torch
 
 
@@ -41,4 +42,7 @@ def translate(text: str, model, tokenizer, device: str, max_new_tokens: int = 80
             max_new_tokens=max_new_tokens,
         )
 
-    return tokenizer.decode(generated_tokens[0], skip_special_tokens=True)
+    decoded = tokenizer.decode(generated_tokens[0], skip_special_tokens=True)
+    # Normalize compatibility glyphs and drop known malformed markers.
+    cleaned = unicodedata.normalize("NFKC", decoded).replace("\ufffd", "").replace("\ufeff", "")
+    return cleaned.strip()

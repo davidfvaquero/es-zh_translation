@@ -12,6 +12,7 @@ def get_training_args(
     num_epochs: int = 3,
     learning_rate: float = 2e-4,
     fp16: bool = True,
+    gradient_checkpointing: bool = False,
     logging_steps: int = 50,
 ) -> TrainingArguments:
     """Build a TrainingArguments object with the given hyperparameters."""
@@ -23,6 +24,7 @@ def get_training_args(
         num_train_epochs=num_epochs,
         learning_rate=learning_rate,
         fp16=fp16,
+        gradient_checkpointing=gradient_checkpointing,
         logging_steps=logging_steps,
         report_to="none",
     )
@@ -40,6 +42,9 @@ def train_model(model, tokenizer, train_dataset, val_dataset, training_args, out
         training_args: A TrainingArguments instance.
         output_dir: Where to save the fine-tuned model.
     """
+    if training_args.gradient_checkpointing:
+        model.config.use_cache = False
+
     trainer = Trainer(
         model=model,
         args=training_args,
