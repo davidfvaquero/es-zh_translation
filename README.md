@@ -70,23 +70,20 @@ PYTHONPATH=src python -m es_zh_translation.web
 
 Ejemplo 1:
 - Entrada: `Me llamo David y soy de España.`
-- Salida esperada: traducción en chino.
+- Salida esperada: 我叫大卫，来自西班牙.
 
 Ejemplo 2:
 - Entrada: `我叫大卫，来自西班牙。`
-- Salida esperada: traducción en español.
+- Salida esperada: Mi nombre es David, soy de España.
 
 Ejemplo 3:
 - Entrada: `Hola mundo`
-- Salida esperada: traducción breve al chino.
+- Salida esperada: 你好世界.
 
 ## Estructura Real del Repositorio
 
 ```text
 es-zh_translation/
-├── data/
-│   ├── raw/
-│   └── processed/
 ├── mt_es_zh_lora/                  # Adaptadores LoRA entrenados (checkpoints)
 ├── src/
 │   ├── app.py
