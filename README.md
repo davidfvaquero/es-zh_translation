@@ -60,6 +60,12 @@ PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python src/train.py
 python src/app.py
 ```
 
+### Ejecutar interfaz web (Flask)
+
+```bash
+PYTHONPATH=src python -m es_zh_translation.web
+```
+
 ## Ejemplo de Uso
 
 Ejemplo 1:
@@ -74,13 +80,14 @@ Ejemplo 3:
 - Entrada: `Hola mundo`
 - Salida esperada: traducción breve al chino.
 
-## Estructura del Repositorio (mínima requerida)
+## Estructura Real del Repositorio
 
 ```text
 es-zh_translation/
 ├── data/
 │   ├── raw/
 │   └── processed/
+├── mt_es_zh_lora/                  # Adaptadores LoRA entrenados (checkpoints)
 ├── src/
 │   ├── app.py
 │   ├── train.py
@@ -91,7 +98,10 @@ es-zh_translation/
 │       ├── data.py
 │       ├── model.py
 │       ├── train.py
-│       └── translate.py
+│       ├── web.py
+│       ├── translate.py
+│       └── templates/
+│           └── index.html
 ├── requirements.txt
 ├── README.md
 └── presentation/
