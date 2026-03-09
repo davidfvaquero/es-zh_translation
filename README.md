@@ -1,83 +1,114 @@
-# Spanish ↔ Chinese Translation (M2M100)
+# ES↔ZH Translator Local con Hugging Face
 
-Fine-tune and run bidirectional Spanish–Chinese translation using Facebook's `m2m100_418M` model with LoRA adapters.
+## Integrantes
+- David Fernandez
+- [Añadir segundo integrante]
 
-## Setup
+## Descripción
+Esta aplicación traduce entre español y chino de forma local (sin APIs externas), usando un modelo de Hugging Face adaptado con LoRA. El objetivo es ofrecer traducciones más consistentes en el dominio trabajado durante el proyecto y demostrar un flujo reproducible de entrenamiento + uso.
+
+## Modelo Base
+- Modelo: `facebook/m2m100_418M`
+- Motivo de elección:
+  - Soporta traducción multilingüe de forma nativa.
+  - Tiene buen equilibrio entre calidad y viabilidad para trabajo local.
+  - Se integra bien con `transformers` + `Trainer`.
+
+## Técnica de Adaptación
+- Opción elegida: **Fine-tuning (Option A) con LoRA**.
+- Justificación:
+  - El ajuste completo del modelo supera fácilmente la VRAM disponible en GPUs pequeñas.
+  - LoRA reduce parámetros entrenables y consumo de memoria.
+  - Permite entrenar localmente manteniendo buena calidad.
+- Resumen técnico:
+  - Se carga el modelo base.
+  - Se inyectan adaptadores LoRA en capas objetivo.
+  - Se entrena sobre pares ES-ZH y se guardan adaptadores en `mt_es_zh_lora/`.
+
+## Dataset
+- Fuente: `news_commentary` (`es-zh`) desde Hugging Face Datasets.
+- Procesamiento:
+  - Split train/validación.
+  - Subconjunto para entrenamiento rápido local.
+  - Tokenización con longitud máxima configurable.
+
+## Instalación y Ejecución
 
 ```bash
+git clone https://github.com/davidfvaquero/es-zh_translation.git
+cd es-zh_translation
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> **Note:** Training benefits from a CUDA GPU. On CPU it will work but run slowly. Edit `src/es_zh_translation/config.py` to adjust hyperparameters.
-
-## Usage
-
-### Fine-tune the model
+### Entrenar adaptadores (Fine-tuning)
 
 ```bash
-PYTHONPATH=src python -m es_zh_translation.cli train
+python src/train.py
 ```
 
-This will:
-1. Download the `news_commentary` ES-ZH parallel corpus
-2. Preprocess and tokenize 5 000 training / 500 validation examples
-3. Train LoRA adapters for 3 epochs and save them to `./mt_es_zh_lora/`
-
-### Translate text
+Si hay fragmentación de memoria CUDA:
 
 ```bash
-# Spanish → Chinese
-PYTHONPATH=src python -m es_zh_translation.cli translate "Me llamo David y soy de España"
-
-# Chinese → Spanish (auto-detected)
-PYTHONPATH=src python -m es_zh_translation.cli translate "我叫大卫，来自西班牙"
-
-# Use a specific model path
-PYTHONPATH=src python -m es_zh_translation.cli translate --model ./mt_es_zh_lora "Hola mundo"
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python src/train.py
 ```
 
-The direction is auto-detected: if the input contains Chinese characters it translates to Spanish, otherwise to Chinese.
-
-### Run a simple web UI
+### Ejecutar aplicación (CLI interactiva)
 
 ```bash
-PYTHONPATH=src python -m es_zh_translation.web
+python src/app.py
 ```
 
-Then open `http://127.0.0.1:5000` in your browser.
+## Ejemplo de Uso
 
-## Project Structure
+Ejemplo 1:
+- Entrada: `Me llamo David y soy de España.`
+- Salida esperada: traducción en chino.
 
-| Path | Description |
-|---|---|
-| `src/es_zh_translation/config.py` | Hyperparameters, paths, device selection |
-| `src/es_zh_translation/model.py` | Load M2M100 model & tokenizer |
-| `src/es_zh_translation/data.py` | Dataset loading, prompt template, tokenization |
-| `src/es_zh_translation/train.py` | Training pipeline (HuggingFace Trainer) |
-| `src/es_zh_translation/translate.py` | Bidirectional auto-detect translation |
-| `src/es_zh_translation/cli.py` | CLI entry point (`train` / `translate`) |
-| `src/es_zh_translation/web.py` | Flask web server for translation |
-| `src/es_zh_translation/templates/index.html` | Web UI template |
-| `requirements.txt` | Dependencies |
+Ejemplo 2:
+- Entrada: `我叫大卫，来自西班牙。`
+- Salida esperada: traducción en español.
 
-## Configuration
+Ejemplo 3:
+- Entrada: `Hola mundo`
+- Salida esperada: traducción breve al chino.
 
-All settings live in `src/es_zh_translation/config.py`:
+## Estructura del Repositorio (mínima requerida)
 
-| Parameter | Default | Description |
-|---|---|---|
-| `MODEL_NAME` | `facebook/m2m100_418M` | Base model |
-| `TRAIN_SUBSET_SIZE` | `5000` | Number of training examples |
-| `VAL_SUBSET_SIZE` | `500` | Number of validation examples |
-| `MAX_LENGTH` | `96` | Tokenization max sequence length |
-| `NUM_EPOCHS` | `3` | Training epochs |
-| `BATCH_SIZE` | `1` | Per-device batch size |
-| `GRADIENT_ACCUMULATION_STEPS` | `8` | Simulate larger batch with lower VRAM |
-| `GRADIENT_CHECKPOINTING` | `True` | Reduces activation memory usage |
-| `USE_LORA` | `True` | Train LoRA adapters instead of full model weights |
-| `LORA_R` | `8` | LoRA rank |
-| `LORA_ALPHA` | `16` | LoRA scaling factor |
-| `LORA_DROPOUT` | `0.05` | LoRA dropout |
-| `LEARNING_RATE` | `2e-4` | Learning rate |
-| `FP16` | `True` | Mixed precision (requires GPU) |
-| `MAX_NEW_TOKENS` | `80` | Max tokens during translation |
+```text
+es-zh_translation/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── src/
+│   ├── app.py
+│   ├── train.py
+│   ├── utils.py
+│   └── es_zh_translation/
+│       ├── cli.py
+│       ├── config.py
+│       ├── data.py
+│       ├── model.py
+│       ├── train.py
+│       └── translate.py
+├── requirements.txt
+├── README.md
+└── presentation/
+```
+
+## Referencias
+- Hugging Face Transformers: https://huggingface.co/docs/transformers
+- Hugging Face Datasets: https://huggingface.co/docs/datasets
+- Modelo M2M100: https://huggingface.co/facebook/m2m100_418M
+- PEFT / LoRA: https://huggingface.co/docs/peft
+
+## Autoevaluación
+- Lo más difícil:
+  - Ajustar el entrenamiento para evitar errores de memoria CUDA en GPU limitada.
+- Resultados:
+  - Se consiguió entrenamiento local funcional con LoRA.
+  - La app permite traducción ES↔ZH en local.
+- Mejoras futuras:
+  - Curar dataset de dominio propio (50-100 QA/domain pairs).
+  - Añadir interfaz web (Gradio/FastAPI) y evaluación automática de calidad.
