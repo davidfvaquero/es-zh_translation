@@ -1,8 +1,8 @@
-# ES↔ZH Translator Local con Hugging Face
+# ES<->CHI Translator Local con Hugging Face
 
 ## Integrantes
 - David Fernandez
-- Dario Cristian Indries
+- Dario Cristian Indries 
 
 ## Descripción
 Esta aplicación traduce entre español y chino de forma local (sin APIs externas), usando un modelo de Hugging Face adaptado con LoRA. El objetivo es ofrecer traducciones más consistentes en el dominio trabajado durante el proyecto y demostrar un flujo reproducible de entrenamiento + uso.
