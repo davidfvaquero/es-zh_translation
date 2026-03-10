@@ -118,4 +118,4 @@ es-zh_translation/
   - La app permite traducción ES↔ZH en local.
 - Mejoras futuras:
   - Curar dataset de dominio propio (50-100 QA/domain pairs).
-  - Añadir interfaz web (Gradio/FastAPI) y evaluación automática de calidad.
+  - Añadir API REST y evaluación automática de calidad.
